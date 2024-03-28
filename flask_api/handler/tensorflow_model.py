@@ -18,9 +18,9 @@ class TensorflowModel:
             input_data = np.expand_dims(image, axis=0)
             input_data = input_data / 255.0
 
-            self.interpreter.set_tensor(input_details[0]['index'], np.float32(input_data))
+            self.interpreter.set_tensor(self.input_details[0]['index'], np.float32(input_data))
             self.interpreter.invoke()
-            output_data = self.interpreter.get_tensor(output_details[0]['index'])
+            output_data = self.interpreter.get_tensor(self.output_details[0]['index'])
             return np.squeeze(output_data).tolist()
         except Exception as e:
             print(f"Prediction error: {str(e)}")

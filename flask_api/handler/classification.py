@@ -13,16 +13,15 @@ class AnimalDetection:
 
         if not model_res:
             return None, 'Not found prediction result'
-
         if not self.model:
-            return None, 'Config not found'
+            return None, 'Config file not found'
 
         for animal, config in self.model.items():
             model_idx = config.get('model_idx')
             threshold = config.get('threshold')
 
-            if not model_idx or not threshold:
-                return None, 'Config not found'
+            if model_idx is None or threshold is None:
+                return None, f'Missing configuration for {animal}'
 
             if len(model_res) > model_idx and model_res[model_idx] > threshold:
                 result.append({
