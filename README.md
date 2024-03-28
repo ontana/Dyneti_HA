@@ -23,7 +23,7 @@ pip3 install -r requirements.txt
 ```
 4. Start Restful API:
 ```bash
-python3 flask_api/server.py
+export PYTHONPATH="${PYTHONPATH}:./flask_api" && python3 flask_api/server.py
 ```
 Wait until there is line `* Running on http://127.0.0.1:5000`
 5. Run testing script: Add images to `scripts/sample`
