@@ -8,11 +8,13 @@ def encode_image_to_base64(file_path):
         return base64.b64encode(image_file.read()).decode('utf-8')
 
 
-def send_image_to_api(image_base64):
+def send_image_to_api(name, image_base64, single_result=False):
     # API endpoint
     api_url = 'http://127.0.0.1:5000/classification'
     data = {
-        'image': image_base64
+        'name': name,
+        'image': image_base64,
+        'single_result': single_result
     }
     response = requests.post(api_url, json=data)
 
@@ -25,5 +27,5 @@ image_files = [f for f in os.listdir(image_folder) if f.endswith(('.jpg', '.jpeg
 for image_file in image_files:
     full_path = os.path.join(image_folder, image_file)
     image_base64 = encode_image_to_base64(full_path)
-    response = send_image_to_api(image_base64)
+    response = send_image_to_api(image_file, image_base64)
     print(f"Processed {image_file}: {response.status_code}, {response.text}")

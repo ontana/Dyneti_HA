@@ -1,10 +1,11 @@
 import base64
+import uuid
 from io import BytesIO
 
 from PIL import Image
-from flask import Flask, jsonify, request
+from flask import Flask, request
 from flask_restful import Api, Resource
-from sqlalchemy import create_engine
+from models.result import db, Result
 
 from flask_api.handler.classification import AnimalDetection
 from flask_api.handler.tensorflow_model import TensorflowModel
@@ -12,9 +13,14 @@ from flask_api.handler.tensorflow_model import TensorflowModel
 # init app
 app = Flask(__name__)
 api = Api(app)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///dyneti.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db_connect = create_engine('sqlite:///db/dyneti.db')
-conn = db_connect.connect()
+db.init_app(app)
+
+# Create the database tables
+with app.app_context():
+    db.create_all()
 
 ts_model = TensorflowModel("config/model.tflite")
 detection = AnimalDetection()
@@ -29,9 +35,10 @@ class Classification(Resource):
         # Send image
         req = request.get_json()
         base64_image = req.get('image')
+        name = req.get('name') or str(uuid.uuid4())
 
         # Should receive the highest possible result instead of set of result
-        single_result = (req.get('single_result') or 'false').lower() == 'true'
+        single_result = str((req.get('single_result') or 'false')).lower() == 'true'
 
         if not base64_image:
             return {'message': 'Image is required'}, 400
@@ -47,10 +54,17 @@ class Classification(Resource):
             if error and not _results:
                 return {'message': error}, 400
 
+            self.save_result(name, _results)
+
             if single_result:
                 return {'prediction': _results[0]}, 200
 
             return {'prediction': _results}, 200
+
+    def save_result(self, name, _results):
+        result = Result(name=name, prediction=_results)
+        db.session.add(result)
+        db.session.commit()
 
 
 api.add_resource(Classification, '/classification')
