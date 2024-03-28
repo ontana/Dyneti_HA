@@ -1,0 +1,12 @@
+{
+  "score_config": {
+    "cat": {
+        "model_idx": 0,
+        "threshold": 0.8
+    },
+    "dog": {
+        "model_idx": 1,
+        "threshold": 0.8
+    }
+  }
+}
