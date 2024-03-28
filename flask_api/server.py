@@ -50,6 +50,7 @@ class Classification(Resource):
             if not prediction:
                 return {'message': 'Prediction failed'}, 400
 
+            print(f'name: {name}, prediction_score: {prediction}')
             _results, error = detection.predict(prediction)
             if error and not _results:
                 return {'message': error}, 400
