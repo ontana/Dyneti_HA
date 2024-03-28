@@ -22,7 +22,7 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
-ts_model = TensorflowModel("config/model.tflite")
+ts_model = TensorflowModel("flask_api/config/model.tflite")
 detection = AnimalDetection()
 
 

@@ -4,7 +4,7 @@ from typing import List, Any, Tuple
 
 class AnimalDetection:
     def __init__(self):
-        with open('config/config.json', 'r') as ifile:
+        with open('flask_api/config/config.json', 'r') as ifile:
             config = json.load(ifile)
             self.model = config.get('score_config')
 
